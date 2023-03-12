@@ -37,11 +37,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
     'api.apps.ApiConfig',
-
     'rest_framework',
-    "corsheaders",
+    'corsheaders',
+    'snippets',
+    # 'user',
 ]
 
 MIDDLEWARE = [
@@ -79,6 +79,10 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'mynotes.wsgi.application'
 
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10
+}
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
