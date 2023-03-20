@@ -13,23 +13,20 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
-from django.urls import path, include
+from django.urls import  path
+from django.urls import include
+from rest_framework.schemas import get_schema_view
+from rest_framework.documentation import include_docs_urls
 from django.views.generic import TemplateView
-from rest_framework import routers
-from snippets.views import SnippetViewSet
-# from users.views import UserViewSet
 
-router = routers.DefaultRouter()
-router.register(r'snippets', SnippetViewSet)
-# router.register(r'users', UserViewSet)
+API_TITLE = 'Pastebin API'
+API_DESCRIPTION = 'A Web API for creating and viewing highlighted code snippets.'
+schema_view = get_schema_view(title=API_TITLE)
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('api/', include(router.urls)),
+    path(r'api/', include('snippets.urls')),
+    path(r'api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    path(r'schema/$', schema_view),
+    #path(r'^docs/', include_docs_urls(title=API_TITLE, description=API_DESCRIPTION))
     path('', TemplateView.as_view(template_name='index.html')),
-    path('api-auth/', include('rest_framework.urls')),
-    path('snippets/', include('snippets.urls')),
 ]
-
-
