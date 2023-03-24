@@ -42,6 +42,29 @@ const SnippetsPage = () => {
                 <h3>
                     <ArrowLeft onClick={handleSubmit} />
                 </h3>
+                <table>
+        <thead>
+            <tr>
+
+            <th>Code</th>
+            <th>Language</th>
+            <th>URL</th>
+            <th>Owner</th>
+            <th>Id</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr key={snippet.id}>
+                <td>{snippet.code}</td>
+                <td>{snippet.language}</td>
+                <td>{snippet.url}</td>
+                <td>{snippet.owner}</td>
+                <td>{snippet.id}</td>
+                <td>             
+                </td>
+            </tr>
+        </tbody>
+        </table>
                 {Id !== 'new' && (
                     <button onClick={async() =>{ await deleteSnippet(snippet.id);window.location.href = '/';}}>Delete</button>
                 )}
@@ -55,12 +78,4 @@ const SnippetsPage = () => {
 export default SnippetsPage;
 
 
-<tr key={snippet.id}>
-<td>{snippet.title}</td>
-<td>{snippet.code}</td>
-<td>{snippet.language}</td>
-<td>{snippet.url}</td>
-<td>{snippet.owner}</td>
-<td>{snippet.id}</td>
-<td>{snippet.created}</td>  
-</tr>
+
