@@ -1,78 +1,86 @@
-import React, { useState, useEffect } from 'react'
-import ListItem from '../components/ListItem'
-import AddButton from '../components/AddButton'
-import { HashRouter as Router, Route } from "react-router-dom";
-import { getSnippets } from '../api';
-
-
+import React, { useState, useEffect } from 'react';
+import ListItem from '../components/ListItem';
+import AddButton from '../components/AddButton';
+import { getSnippets, deleteSnippet } from '../api';
+import Swal from 'sweetalert2';
+import { HashRouter, Route, Link } from 'react-router-dom';
+import ConfettiButton from '../components/ConfettiButton';
 
 const SnippetsListPage = () => {
+  const [snippets, setSnippets] = useState([]);
 
-    let [snippets, setSnippets] = useState({results:[]})
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await getSnippets();
+      setSnippets(data.results);
+    };
+    fetchData();
+  }, []);
 
-    useEffect(() => {
-        getSnippets()
-    }, [])
-
-
-    let getSnippets = async () => {
-
-        let response = await fetch('http://localhost:8132/api/snippets/')
-        let data = await response.json()
-        setSnippets(data)
+  const handleDelete = async (id) => {
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: 'You will not be able to recover this snippet!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'Cancel',
+    });
+    if (result.isConfirmed) {
+      await deleteSnippet(id);
+      setSnippets((prevSnippets) => prevSnippets.filter((snippet) => snippet.id !== id));
+      Swal.fire({
+        title: 'Deleted!',
+        text: 'Your snippet has been deleted.',
+        icon: 'success',
+      });
     }
-    
-    function snippetRow(snippet, index) {
-        return <ListItem key={index} snippet={snippet} />
-    }
+  };
 
-    return (
-        <div className="notes">
-            <h2>list</h2>
-            {/* <div className="notes-header">
-                <h2 className="notes-title">&#9782; Notes</h2>
-                <p className="notes-count">{snippets.results.length}</p>
-            </div> */}
-            {/* <div className="notes-list">
-                {snippets.results.map((snippet, index) => (
-                    <ListItem key={index} snippet={snippet} />
-                ))}
-            </div> */}
-            <div>
-            <table>
-            <thead>
+  return (
+    <div className="notes">
+      <ConfettiButton />
+      <div>
+        <table>
+          <thead>
             <tr>
-                <th>Title</th>
-                <th>Code</th>
-                <th>Language</th>
-                <th>URL</th>
-                <th>Owner</th>
-                <th>Id</th>
-                <th>Created</th>
+              <th>Title</th>
+              <th>Code</th>
+              <th>Language</th>
+              <th>URL</th>
+              <th>Owner</th>
+              <th>Id</th>
+              <th>Action</th>
             </tr>
-            </thead>
-            <tbody>
-            {snippets.results.map((snippet) => (
-                <tr key={snippet.id}>
+          </thead>
+          <tbody>
+            {snippets.map((snippet) => (
+              <tr key={snippet.id}>
                 <td>{snippet.title}</td>
                 <td>{snippet.code}</td>
                 <td>{snippet.language}</td>
                 <td>{snippet.url}</td>
                 <td>{snippet.owner}</td>
                 <td>{snippet.id}</td>
-                <td>{snippet.created}</td>  
-                </tr>
+                <td>
+                  <Link to={`/snippet/${snippet.id}`}>
+                    <button>Update</button>
+                  </Link>
+                  <button onClick={() => handleDelete(snippet.id)}>Delete</button>
+                </td>
+              </tr>
             ))}
-            </tbody>
-            </table>
-            </div>
-            <div className="notes-list">
-                {snippets.results.map(snippetRow)}
-            </div>
-            <AddButton />
-        </div>
-    )
-}
+          </tbody>
+        </table>
+      </div>
+      <div className="notes-list">
+        {snippets.map((snippet, index) => (
+          <ListItem key={index} snippet={snippet} />
+        ))}
+      </div>
+      <AddButton />
+    </div>
+  );
+};
 
 export default SnippetsListPage;
-
